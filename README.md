@@ -55,11 +55,15 @@ streamlit run dashboard.py
 
 ## クラウド定期実行 (/schedule)
 
-課金なしで「自動売買」を実現するため、Claude Codeの `/schedule` でクラウドエージェントを定期実行する構成にしています。クラウド実行は毎回まっさらな環境のため、`data/simulator.db` は(通常のローカル運用と異なり)**gitで追跡・コミット**して状態を引き継いでいます。`.env`(APIキー)は引き続きgitignore対象です。ローカルでも直接コマンドを実行できますが、その場合は毎回 `git pull` / `git push` を意識してください(cronの実行と競合しないよう注意)。
+課金なしで「自動売買」を実現するため、Claude Codeの `/schedule` でクラウドエージェントを定期実行する構成にしています(現在は**1時間おき**、`config.py` の `ROUTINE_INTERVAL_HOURS` / `ROUTINE_CRON_MINUTE` と一致させること)。クラウド実行は毎回まっさらな環境のため、`data/simulator.db` は(通常のローカル運用と異なり)**gitで追跡・コミット**して状態を引き継いでいます。`.env`(APIキー)は引き続きgitignore対象です。ローカルでも直接コマンドを実行できますが、その場合は毎回 `git pull` / `git push` を意識してください(cronの実行と競合しないよう注意)。
+
+## Webダッシュボード (Streamlit Community Cloud)
+
+このリポジトリをそのまま [Streamlit Community Cloud](https://share.streamlit.io) に接続し、Main file pathを `dashboard.py` に設定するとブラウザから閲覧できるURLが発行されます。クラウドルーティンが `data/simulator.db` をpushするたびに自動で再デプロイされます。
 
 ## 設計メモ
 
-- 基軸通貨はJPYに統一。米国株の売買は実行時のUSD/JPYレート(`JPY=X`)で円換算します。為替変動もそのまま損益に反映されます。
+- 基軸通貨はJPYに統一。米国株の売買は実行時のUSD/JPYレートで円換算します。為替変動もそのまま損益に反映されます。
 - 保有株数は `trades` テーブルからの導出値です(別テーブルでの二重管理はしていません)。
 - `portfolio.execute_trade()` が両モード共通の検証付き実行関数です。現金不足・保有数不足の注文は `rejected` として理由付きでDBに記録され、ダッシュボードから確認できます。
 

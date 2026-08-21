@@ -22,3 +22,8 @@ WATCHLIST = [
 ]
 
 FX_USDJPY = {"tv_symbol": "USDJPY", "tv_exchange": "FX_IDC", "tv_screener": "forex"}
+
+# クラウドの自動売買ルーティン(/schedule)の実行間隔。ダッシュボードの「次回実行まで」
+# 表示に使う。ルーティン側のcron設定を変更したらここも合わせて変更すること。
+ROUTINE_INTERVAL_HOURS = 1
+ROUTINE_CRON_MINUTE = 0
