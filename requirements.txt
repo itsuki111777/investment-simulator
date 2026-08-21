@@ -1,0 +1,6 @@
+yfinance>=0.2.40
+pandas
+streamlit
+anthropic>=0.40
+python-dotenv
+pydantic>=2
