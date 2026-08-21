@@ -4,3 +4,4 @@ streamlit
 anthropic>=0.40
 python-dotenv
 pydantic>=2
+yfinance>=0.2.40
