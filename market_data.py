@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-import yfinance as yf
+from tradingview_ta import Interval, TA_Handler
 
 import config
 
@@ -13,37 +13,35 @@ def determine_currency(ticker: str) -> str:
     return "JPY" if ticker.endswith(".T") else "USD"
 
 
-def _last_price_from_history(t: yf.Ticker) -> float | None:
-    hist = t.history(period="5d")
-    if hist.empty:
-        return None
-    return float(hist["Close"].iloc[-1])
+def _find_watchlist_entry(ticker: str) -> dict:
+    entry = next((e for e in config.WATCHLIST if e["ticker"] == ticker), None)
+    if entry is None:
+        raise PriceUnavailableError(f"{ticker} is not in the configured watchlist")
+    return entry
+
+
+def _fetch_indicators(symbol: str, exchange: str, screener: str) -> dict:
+    try:
+        handler = TA_Handler(
+            symbol=symbol,
+            exchange=exchange,
+            screener=screener,
+            interval=Interval.INTERVAL_1_DAY,
+        )
+        return handler.get_analysis().indicators
+    except Exception as e:
+        raise PriceUnavailableError(f"TradingView fetch failed for {symbol} ({exchange}): {e}")
 
 
 def get_quote(ticker: str) -> dict:
-    t = yf.Ticker(ticker)
-    price = None
-    prev_close = None
+    entry = _find_watchlist_entry(ticker)
+    indicators = _fetch_indicators(entry["tv_symbol"], entry["tv_exchange"], entry["tv_screener"])
 
-    try:
-        fast_info = t.fast_info
-        price = fast_info.get("lastPrice")
-        prev_close = fast_info.get("previousClose")
-    except Exception:
-        price = None
-
-    if price is None:
-        price = _last_price_from_history(t)
-
+    price = indicators.get("close")
     if price is None:
         raise PriceUnavailableError(f"Could not fetch a price for {ticker}")
 
-    day_change_pct = None
-    if prev_close:
-        try:
-            day_change_pct = (price - prev_close) / prev_close * 100
-        except ZeroDivisionError:
-            day_change_pct = None
+    day_change_pct = indicators.get("change")
 
     return {
         "ticker": ticker,
@@ -55,13 +53,9 @@ def get_quote(ticker: str) -> dict:
 
 
 def get_fx_rate_usdjpy() -> float:
-    t = yf.Ticker("JPY=X")
-    try:
-        rate = t.fast_info.get("lastPrice")
-    except Exception:
-        rate = None
-    if rate is None:
-        rate = _last_price_from_history(t)
+    fx = config.FX_USDJPY
+    indicators = _fetch_indicators(fx["tv_symbol"], fx["tv_exchange"], fx["tv_screener"])
+    rate = indicators.get("close")
     if rate is None:
         raise PriceUnavailableError("Could not fetch USD/JPY FX rate")
     return float(rate)

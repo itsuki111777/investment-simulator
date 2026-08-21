@@ -1,6 +1,6 @@
 # 仮想マネー投資シミュレーター
 
-Claude Codeの投資判断力を実験するための個人用シミュレーターです。**実際のリアルマネーは一切使用しません。** 株価は [yfinance](https://github.com/ranaroussi/yfinance) 経由で実際の市場データ(米国株・日本株)を取得し、仮想の現金残高のみを操作します。
+Claude Codeの投資判断力を実験するための個人用シミュレーターです。**実際のリアルマネーは一切使用しません。** 株価は [tradingview-ta](https://github.com/brian-the-dev/python-tradingview-ta)(TradingViewの非公式データ取得ライブラリ)経由で実際の市場データ(米国株・日本株)を取得し、仮想の現金残高のみを操作します。TradingView側の公式データAPIではなく非公式ライブラリである点にご留意ください。
 
 ## セットアップ
 

@@ -19,7 +19,7 @@ def get_conn():
 
 
 st.title("仮想マネー投資シミュレーター")
-st.caption("実際のリアルマネーは使用していません。株価データはyfinance経由の実市場データです。")
+st.caption("実際のリアルマネーは使用していません。株価データはTradingView(tradingview-ta)経由の実市場データです。")
 
 conn = get_conn()
 

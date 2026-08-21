@@ -6,17 +6,19 @@ DB_PATH = os.path.join(os.path.dirname(__file__), "data", "simulator.db")
 CLAUDE_MODEL = os.environ.get("CLAUDE_TRADER_MODEL", "claude-sonnet-5")
 
 WATCHLIST = [
-    {"ticker": "AAPL", "name": "Apple", "market": "US"},
-    {"ticker": "MSFT", "name": "Microsoft", "market": "US"},
-    {"ticker": "NVDA", "name": "NVIDIA", "market": "US"},
-    {"ticker": "GOOGL", "name": "Alphabet", "market": "US"},
-    {"ticker": "AMZN", "name": "Amazon", "market": "US"},
-    {"ticker": "TSLA", "name": "Tesla", "market": "US"},
-    {"ticker": "7203.T", "name": "Toyota", "market": "JP"},
-    {"ticker": "6758.T", "name": "Sony", "market": "JP"},
-    {"ticker": "9984.T", "name": "SoftBank Group", "market": "JP"},
-    {"ticker": "8306.T", "name": "Mitsubishi UFJ", "market": "JP"},
-    {"ticker": "6501.T", "name": "Hitachi", "market": "JP"},
-    {"ticker": "9432.T", "name": "NTT", "market": "JP"},
-    {"ticker": "7974.T", "name": "Nintendo", "market": "JP"},
+    {"ticker": "AAPL", "name": "Apple", "market": "US", "tv_symbol": "AAPL", "tv_exchange": "NASDAQ", "tv_screener": "america"},
+    {"ticker": "MSFT", "name": "Microsoft", "market": "US", "tv_symbol": "MSFT", "tv_exchange": "NASDAQ", "tv_screener": "america"},
+    {"ticker": "NVDA", "name": "NVIDIA", "market": "US", "tv_symbol": "NVDA", "tv_exchange": "NASDAQ", "tv_screener": "america"},
+    {"ticker": "GOOGL", "name": "Alphabet", "market": "US", "tv_symbol": "GOOGL", "tv_exchange": "NASDAQ", "tv_screener": "america"},
+    {"ticker": "AMZN", "name": "Amazon", "market": "US", "tv_symbol": "AMZN", "tv_exchange": "NASDAQ", "tv_screener": "america"},
+    {"ticker": "TSLA", "name": "Tesla", "market": "US", "tv_symbol": "TSLA", "tv_exchange": "NASDAQ", "tv_screener": "america"},
+    {"ticker": "7203.T", "name": "Toyota", "market": "JP", "tv_symbol": "7203", "tv_exchange": "TSE", "tv_screener": "japan"},
+    {"ticker": "6758.T", "name": "Sony", "market": "JP", "tv_symbol": "6758", "tv_exchange": "TSE", "tv_screener": "japan"},
+    {"ticker": "9984.T", "name": "SoftBank Group", "market": "JP", "tv_symbol": "9984", "tv_exchange": "TSE", "tv_screener": "japan"},
+    {"ticker": "8306.T", "name": "Mitsubishi UFJ", "market": "JP", "tv_symbol": "8306", "tv_exchange": "TSE", "tv_screener": "japan"},
+    {"ticker": "6501.T", "name": "Hitachi", "market": "JP", "tv_symbol": "6501", "tv_exchange": "TSE", "tv_screener": "japan"},
+    {"ticker": "9432.T", "name": "NTT", "market": "JP", "tv_symbol": "9432", "tv_exchange": "TSE", "tv_screener": "japan"},
+    {"ticker": "7974.T", "name": "Nintendo", "market": "JP", "tv_symbol": "7974", "tv_exchange": "TSE", "tv_screener": "japan"},
 ]
+
+FX_USDJPY = {"tv_symbol": "USDJPY", "tv_exchange": "FX_IDC", "tv_screener": "forex"}
