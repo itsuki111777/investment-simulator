@@ -71,12 +71,20 @@ def get_cash_balance_jpy(conn: sqlite3.Connection) -> float:
 
 
 def get_portfolio_value_jpy(conn: sqlite3.Connection, live_prices_jpy: dict | None = None):
-    """live_prices_jpy: optional {ticker: price_in_jpy} to avoid refetching quotes."""
+    """live_prices_jpy: optional {ticker: price_in_jpy} to avoid refetching quotes.
+
+    If a live price can't be fetched for a held ticker (even after retries in
+    market_data), we fall back to that position's average cost basis rather
+    than 0 - a transient fetch failure should not make the position look like
+    a total loss. This is an approximation for that one ticker on that one
+    render, not a real price.
+    """
     cash = get_cash_balance_jpy(conn)
     holdings = get_holdings(conn)
 
     holdings_value = 0.0
     fx_rate = None
+    cost_basis = None
     for ticker, qty in holdings.items():
         price_jpy = (live_prices_jpy or {}).get(ticker)
         if price_jpy is None:
@@ -89,7 +97,9 @@ def get_portfolio_value_jpy(conn: sqlite3.Connection, live_prices_jpy: dict | No
                 else:
                     price_jpy = quote["price"]
             except market_data.PriceUnavailableError:
-                price_jpy = 0.0
+                if cost_basis is None:
+                    cost_basis = get_holdings_with_cost(conn)
+                price_jpy = cost_basis.get(ticker, {}).get("avg_cost_jpy", 0.0)
         holdings_value += price_jpy * qty
 
     total = cash + holdings_value

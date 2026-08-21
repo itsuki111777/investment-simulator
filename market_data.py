@@ -1,8 +1,12 @@
+import time
 from datetime import datetime, timezone
 
 from tradingview_ta import Interval, TA_Handler
 
 import config
+
+_RETRIES = 3
+_RETRY_DELAY_SECONDS = 0.8
 
 
 class PriceUnavailableError(Exception):
@@ -21,16 +25,21 @@ def _find_watchlist_entry(ticker: str) -> dict:
 
 
 def _fetch_indicators(symbol: str, exchange: str, screener: str) -> dict:
-    try:
-        handler = TA_Handler(
-            symbol=symbol,
-            exchange=exchange,
-            screener=screener,
-            interval=Interval.INTERVAL_1_DAY,
-        )
-        return handler.get_analysis().indicators
-    except Exception as e:
-        raise PriceUnavailableError(f"TradingView fetch failed for {symbol} ({exchange}): {e}")
+    last_error = None
+    for attempt in range(_RETRIES):
+        try:
+            handler = TA_Handler(
+                symbol=symbol,
+                exchange=exchange,
+                screener=screener,
+                interval=Interval.INTERVAL_1_DAY,
+            )
+            return handler.get_analysis().indicators
+        except Exception as e:
+            last_error = e
+            if attempt < _RETRIES - 1:
+                time.sleep(_RETRY_DELAY_SECONDS)
+    raise PriceUnavailableError(f"TradingView fetch failed for {symbol} ({exchange}): {last_error}")
 
 
 def get_quote(ticker: str) -> dict:

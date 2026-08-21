@@ -30,6 +30,12 @@ live_prices_jpy = {
     if "error" not in item
 }
 
+failed_tickers = [item["ticker"] for item in snapshot if "error" in item]
+if failed_tickers:
+    st.warning(
+        f"以下の銘柄は最新価格を取得できませんでした(取得単価で近似表示しています): {', '.join(failed_tickers)}"
+    )
+
 cash, holdings_value, total = portfolio.get_portfolio_value_jpy(conn, live_prices_jpy)
 pnl = total - config.INITIAL_CAPITAL_JPY
 pnl_pct = (pnl / config.INITIAL_CAPITAL_JPY) * 100
